@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         CommandParser command = new CommandParser();
         KeyValueStore store = new KeyValueStore();
@@ -10,9 +10,7 @@ public class Main {
             String input = sc.nextLine();
             String[] str = command.parse(input);
             String res = handler.execute(str, store);
-            if(res.equals("EXIT")){
-                break;
-            }
+            if(res.equals("EXIT")) break;
             System.out.println(res);
         }
     }
