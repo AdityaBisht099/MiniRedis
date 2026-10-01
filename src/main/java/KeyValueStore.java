@@ -1,7 +1,7 @@
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 public class KeyValueStore {
-    private final Map<String, String> map = new HashMap<>();
+    private final Map<String, String> map = new ConcurrentHashMap<>();
     public void set(String key, String value) {
         map.put(key, value);
     }

@@ -10,7 +10,7 @@ public class Main {
             String input = sc.nextLine();
             String[] str = command.parse(input);
             String res = handler.execute(str, store);
-            if(res.equals("EXIT")) break;
+            if("EXIT".equals(res)) break;
             System.out.println(res);
         }
     }
