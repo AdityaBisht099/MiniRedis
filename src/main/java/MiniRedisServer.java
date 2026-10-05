@@ -8,20 +8,17 @@ import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 public class MiniRedisServer {
-    static void handleClient(Socket socket, KeyValueStore store, CommandParser parser, CommandHandler handler) throws Exception {
+    static void handleClient(Socket socket, KeyValueStore store, RespParser parser, CommandHandler handler, RespEncoder encoder) throws Exception {
         try(Socket clientSocket = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         OutputStream output = clientSocket.getOutputStream()){
             while(true) {
-                String command = reader.readLine();
-                if (command == null) {
-                    break;
-                }
-                String[] parts = parser.parse(command);
+                String[] parts = parser.parse(reader);
                 System.out.println(Arrays.toString(parts));
-                String response = handler.execute(parts, store);
-                output.write((response + "\n").getBytes(StandardCharsets.UTF_8));
+                RespValue response = handler.execute(parts, store);
+                String encodedResponse = encoder.encode(response);
+                output.write(encodedResponse.getBytes(StandardCharsets.UTF_8));
                 System.out.println(response);
-                if("EXIT".equals(response)){
+                if (parts.length == 1 && parts[0].equals("EXIT")) {
                     break;
                 }
         }
@@ -32,14 +29,15 @@ public class MiniRedisServer {
     public static void main(String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket(6379);
         KeyValueStore store = new KeyValueStore();
-        CommandParser parser = new CommandParser();
         CommandHandler handler = new CommandHandler();
+        RespParser parser = new RespParser();
+        RespEncoder encoder = new RespEncoder();
         ExecutorService executor = Executors.newFixedThreadPool(10);
         while(true) {
             Socket socket = serverSocket.accept();
             executor.submit(() -> {
                 try {
-                    handleClient(socket, store, parser, handler);
+                    handleClient(socket, store, parser, handler, encoder);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
