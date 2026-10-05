@@ -10,10 +10,8 @@ public class RespParserTest {
                 "name\r\n" +
                 "$5\r\n" +
                 "Hello\r\n";
-        BufferedReader reader = new BufferedReader(
-                new StringReader(resp)
-        );
-        RespParser parser = new RespParser();
+        BufferedReader reader =new BufferedReader(new StringReader(resp));
+        RespParser parser =new RespParser();
         String[] parts = parser.parse(reader);
         System.out.println(Arrays.toString(parts));
     }

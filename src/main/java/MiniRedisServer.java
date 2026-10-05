@@ -8,10 +8,10 @@ import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 public class MiniRedisServer {
-    static void handleClient(Socket socket, KeyValueStore store, RespParser parser, CommandHandler handler, RespEncoder encoder) throws Exception {
+    static void handleClient(Socket socket,KeyValueStore store,RespParser parser,CommandHandler handler, RespEncoder encoder) throws Exception {
         try(Socket clientSocket = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         OutputStream output = clientSocket.getOutputStream()){
-            while(true) {
+            while(true){
                 String[] parts = parser.parse(reader);
                 System.out.println(Arrays.toString(parts));
                 RespValue response = handler.execute(parts, store);
@@ -22,7 +22,7 @@ public class MiniRedisServer {
                     break;
                 }
         }
-        }catch (Exception e) {
+        }catch(Exception e){
             throw new RuntimeException(e);
         }
     }
@@ -33,12 +33,12 @@ public class MiniRedisServer {
         RespParser parser = new RespParser();
         RespEncoder encoder = new RespEncoder();
         ExecutorService executor = Executors.newFixedThreadPool(10);
-        while(true) {
+        while(true){
             Socket socket = serverSocket.accept();
             executor.submit(() -> {
-                try {
+                try{
                     handleClient(socket, store, parser, handler, encoder);
-                } catch (Exception e) {
+                }catch(Exception e) {
                     throw new RuntimeException(e);
                 }
             });

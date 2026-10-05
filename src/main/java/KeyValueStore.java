@@ -2,13 +2,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 public class KeyValueStore {
     private final Map<String, String> map = new ConcurrentHashMap<>();
-    public void set(String key, String value) {
+    public void set(String key, String value){
         map.put(key, value);
     }
-    public String get(String key) {
+    public String get(String key){
         return map.get(key);
     }
-    public void delete(String key) {
+    public void delete(String key){
         map.remove(key);
     }
 }

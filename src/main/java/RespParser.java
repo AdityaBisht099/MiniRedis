@@ -6,7 +6,7 @@ public class RespParser {
         String countString = line.substring(1);
         int count = Integer.parseInt(countString);
         String[] parts = new String[count];
-        for (int i = 0; i < count; i++) {
+        for(int i = 0; i < count; i++){
             String lengthLine = reader.readLine();
             String lengthString = lengthLine.substring(1);
             int length = Integer.parseInt(lengthString);

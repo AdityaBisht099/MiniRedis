@@ -7,7 +7,7 @@ public class RespClient {
     static String encode(String[] parts) {
         StringBuilder resp = new StringBuilder();
         resp.append("*").append(parts.length).append("\r\n");
-        for (String part : parts) {
+        for(String part : parts){
             resp.append("$")
                     .append(part.getBytes(StandardCharsets.UTF_8).length)
                     .append("\r\n");
