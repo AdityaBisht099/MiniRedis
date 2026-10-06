@@ -1,5 +1,5 @@
-import java.io.BufferedReader;
-import java.io.StringReader;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 public class RespParserTest {
     public static void main(String[] args) throws Exception {
@@ -10,9 +10,9 @@ public class RespParserTest {
                 "name\r\n" +
                 "$5\r\n" +
                 "Hello\r\n";
-        BufferedReader reader =new BufferedReader(new StringReader(resp));
-        RespParser parser =new RespParser();
-        String[] parts = parser.parse(reader);
+        ByteArrayInputStream input = new ByteArrayInputStream(resp.getBytes(StandardCharsets.UTF_8));
+        RespParser parser = new RespParser();
+        String[] parts = parser.parse(input);
         System.out.println(Arrays.toString(parts));
     }
 }

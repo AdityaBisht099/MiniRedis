@@ -1,27 +1,35 @@
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 public class MiniRedisServer {
-    static void handleClient(Socket socket,KeyValueStore store,RespParser parser,CommandHandler handler, RespEncoder encoder) throws Exception {
-        try(Socket clientSocket = socket; BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        OutputStream output = clientSocket.getOutputStream()){
+    static void handleClient(
+            Socket socket,
+            KeyValueStore store,
+            RespParser parser,
+            CommandHandler handler,
+            RespEncoder encoder) throws Exception {
+        try(
+                Socket clientSocket = socket;
+                InputStream input = clientSocket.getInputStream();
+                OutputStream output = clientSocket.getOutputStream()
+        ){
             while(true){
-                String[] parts = parser.parse(reader);
+                String[] parts = parser.parse(input);
                 System.out.println(Arrays.toString(parts));
                 RespValue response = handler.execute(parts, store);
                 String encodedResponse = encoder.encode(response);
                 output.write(encodedResponse.getBytes(StandardCharsets.UTF_8));
+                output.flush();
                 System.out.println(response);
-                if (parts.length == 1 && parts[0].equals("EXIT")) {
+                if(parts.length == 1 && parts[0].equals("EXIT")){
                     break;
                 }
-        }
+            }
         }catch(Exception e){
             throw new RuntimeException(e);
         }
