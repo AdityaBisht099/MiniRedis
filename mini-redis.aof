@@ -1,0 +1,7 @@
+SET name Aditya
+SET age 20
+DELETE age
+SET name Aditya
+SET name Potato
+DELETE name
+

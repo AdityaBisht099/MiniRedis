@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
@@ -5,10 +6,17 @@ public class Main {
         CommandParser command = new CommandParser();
         KeyValueStore store = new KeyValueStore();
         CommandHandler handler = new CommandHandler();
+        PersistenceManager persistence = new PersistenceManager();
         while(true){
             String input = sc.nextLine();
             String[] str = command.parse(input);
-            RespValue response = handler.execute(str, store);
+            RespValue response = null;
+            try{
+                response = handler.execute(str, store,persistence);
+            }catch (IOException e){
+                System.out.println("Could not save command: " + e.getMessage());
+                continue;
+            }
             if("EXIT".equals(input)){
                 break;
             }

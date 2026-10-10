@@ -12,7 +12,8 @@ public class MiniRedisServer {
             KeyValueStore store,
             RespParser parser,
             CommandHandler handler,
-            RespEncoder encoder) throws Exception {
+            RespEncoder encoder,
+            PersistenceManager persistence) throws Exception {
         try(
                 Socket clientSocket = socket;
                 InputStream input = clientSocket.getInputStream();
@@ -21,7 +22,7 @@ public class MiniRedisServer {
             while(true){
                 String[] parts = parser.parse(input);
                 System.out.println(Arrays.toString(parts));
-                RespValue response = handler.execute(parts, store);
+                RespValue response = handler.execute(parts, store, persistence);
                 String encodedResponse = encoder.encode(response);
                 output.write(encodedResponse.getBytes(StandardCharsets.UTF_8));
                 output.flush();
@@ -40,12 +41,13 @@ public class MiniRedisServer {
         CommandHandler handler = new CommandHandler();
         RespParser parser = new RespParser();
         RespEncoder encoder = new RespEncoder();
+        PersistenceManager persistence = new PersistenceManager();
         ExecutorService executor = Executors.newFixedThreadPool(10);
         while(true){
             Socket socket = serverSocket.accept();
             executor.submit(() -> {
                 try{
-                    handleClient(socket, store, parser, handler, encoder);
+                    handleClient(socket, store, parser, handler, encoder, persistence);
                 }catch(Exception e) {
                     throw new RuntimeException(e);
                 }
