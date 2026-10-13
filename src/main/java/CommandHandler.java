@@ -1,16 +1,19 @@
 import java.io.IOException;
 
 public class CommandHandler {
-    public RespValue execute(String[] parts, KeyValueStore store, PersistenceManager persistence) throws IOException{
+    public RespValue execute(String[] parts, KeyValueStore store, PersistenceManager persistence,  boolean recovering) throws IOException{
         if(parts.length == 0){
             return new RespValue(RespValue.Type.ERROR, "empty command");
         }
-        if(parts.length == 3 && parts[0].equals("SET")){
+        if (parts.length == 3 && parts[0].equals("SET")) {
             store.set(parts[1], parts[2]);
-            try{
-                persistence.append("SET " + parts[1] + " " + parts[2]);
-            }catch(IOException e){
+            try {
+                if (!recovering) {
+                    persistence.append("SET " + parts[1] + " " + parts[2]);
+                }
+            } catch (IOException e) {
                 System.out.println("Could not save command: " + e.getMessage());
+                return new RespValue(RespValue.Type.ERROR, "Could not save command");
             }
             return new RespValue(RespValue.Type.SIMPLE_STRING, "OK");
         }
@@ -21,14 +24,23 @@ public class CommandHandler {
             }
             return new RespValue(RespValue.Type.BULK_STRING, value);
         }
-        else if(parts.length == 2 && parts[0].equals("DELETE")){
+        else if (parts.length == 2 && parts[0].equals("DELETE")) {
             store.delete(parts[1]);
-            try{
-                persistence.append("DELETE " + parts[1]);
-            }catch (IOException e){
+            try {
+                if (!recovering) {
+                    persistence.append("DELETE " + parts[1]);
+                }
+            } catch (IOException e) {
                 System.out.println("Could not save command: " + e.getMessage());
+                return new RespValue(
+                        RespValue.Type.ERROR,
+                        "Could not save command"
+                );
             }
-            return new RespValue(RespValue.Type.SIMPLE_STRING, "Key DELETED");
+            return new RespValue(
+                    RespValue.Type.SIMPLE_STRING,
+                    "Key DELETED"
+            );
         }
         else if(parts.length == 1 && parts[0].equals("EXIT")){
             return new RespValue(RespValue.Type.SIMPLE_STRING, "EXIT");

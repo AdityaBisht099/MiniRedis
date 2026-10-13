@@ -22,7 +22,7 @@ public class MiniRedisServer {
             while(true){
                 String[] parts = parser.parse(input);
                 System.out.println(Arrays.toString(parts));
-                RespValue response = handler.execute(parts, store, persistence);
+                RespValue response = handler.execute(parts, store, persistence, false);
                 String encodedResponse = encoder.encode(response);
                 output.write(encodedResponse.getBytes(StandardCharsets.UTF_8));
                 output.flush();
@@ -42,6 +42,9 @@ public class MiniRedisServer {
         RespParser parser = new RespParser();
         RespEncoder encoder = new RespEncoder();
         PersistenceManager persistence = new PersistenceManager();
+        CommandParser commandParser = new CommandParser();
+        persistence.recover(store, commandParser, handler);
+        System.out.println("MiniRedis recovery complete!");
         ExecutorService executor = Executors.newFixedThreadPool(10);
         while(true){
             Socket socket = serverSocket.accept();

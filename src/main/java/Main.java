@@ -12,7 +12,7 @@ public class Main {
             String[] str = command.parse(input);
             RespValue response = null;
             try{
-                response = handler.execute(str, store,persistence);
+                response = handler.execute(str, store,persistence, false);
             }catch (IOException e){
                 System.out.println("Could not save command: " + e.getMessage());
                 continue;
