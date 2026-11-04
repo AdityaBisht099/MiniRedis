@@ -35,6 +35,9 @@ public class RespDecoder {
         if (line.charAt(0) == '-') {
             return line.substring(1);
         }
+        if (line.charAt(0) == ':') {
+            return line.substring(1);
+        }
         if (line.charAt(0) == '$') {
             int length = Integer.parseInt(line.substring(1));
             if (length == -1) {

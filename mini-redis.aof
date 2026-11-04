@@ -6,3 +6,8 @@ SET name Potato
 DELETE name
 
 SET name Aditya
+SET session Aditya EX 5
+SET session Aditya EX 60
+SET session Aditya EX 60
+SET name Aditya
+SETAT fresh Aditya 1793800174542

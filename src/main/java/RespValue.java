@@ -1,24 +1,25 @@
 public class RespValue {
-    enum Type{
+    enum Type {
         SIMPLE_STRING,
         BULK_STRING,
         NULL,
-        ERROR
+        ERROR,
+        INTEGER
     }
     private final Type type;
     private final String value;
-    public RespValue(Type type, String value){
+    public RespValue(Type type, String value) {
         this.type = type;
         this.value = value;
     }
-    public Type getType(){
+    public Type getType() {
         return type;
     }
-    public String getValue(){
+    public String getValue() {
         return value;
     }
     @Override
-    public String toString(){
+    public String toString() {
         return type + ": " + value;
     }
 }
